@@ -49,16 +49,16 @@ excecuteCommand command = do
 -- | worker function.
 -- This is the function that is called to launch a worker. It loops forever, asking for work, reading its message queue
 -- and sending the result of runnning numPrimeFactors on the message content (an integer).
-worker :: ( ProcessId  -- The processid of the manager (where we send the results of our work)
-         , ProcessId) -- the process id of the work queue (where we get our work from)
+worker :: ( ProcessId   -- The processid of the manager (where we send the results of our work)
+         , ProcessId    -- the process id of the work queue (where we get our work from)
+         , String)      -- Repo path
        -> Process ()
-worker (manager, workQueue) = do
+worker (manager, workQueue, repoPath) = do
     us <- getSelfPid                          -- get our process identifier
     let temp_dir = "tmp-worker" ++ drop 16 (show us)   -- create a scratch dir for worker work
 
-    --liftIO $ putStrLn $ "Clonging worker copy of repo: " ++ repoName
-    --liftIO $ excecuteCommand ("git clone " ++ repoName ++ " " ++ temp_dir)
-    liftIO $ excecuteCommand ("git clone https://github.com/DylanHobbs/haskell-chat.git " ++ temp_dir)
+    liftIO $ putStrLn $ "Clonging worker copy of repo: " ++ repoPath
+    liftIO $ excecuteCommand ("git clone " ++ repoPath ++ " " ++ temp_dir)
     liftIO $ putStrLn $ "Starting worker: " ++ show us
     go us
   where
@@ -86,9 +86,10 @@ remotable ['worker] -- this makes the worker function executable on a remote nod
 
 manager :: Integer    -- The number range we wish to generate work for (there will be n work packages)
         -> [NodeId]   -- The set of cloud haskell nodes we will initalise as workers
-        -> [String]
+        -> [String]   -- List of sha commits
+        -> String     -- Repo name for remote cloning
         -> Process Integer
-manager n workers list = do
+manager n workers list repoPath = do
   us <- getSelfPid
 
   -- first, we create a thread that generates the work tasks in response to workers
@@ -111,7 +112,7 @@ manager n workers list = do
 
   -- Next, start worker processes on the given cloud haskell nodes. These will start
   -- asking for work from the workQueue thread immediately.
-  forM_ workers $ \ nid -> spawn nid ($(mkClosure 'worker) (us, workQueue))
+  forM_ workers $ \ nid -> spawn nid ($(mkClosure 'worker) (us, workQueue, repoPath))
   liftIO $ putStrLn "[Manager] Workers spawned"
   -- wait for all the results from the workers and return the sum total. Look at the implementation, whcih is not simply
   -- summing integer values, but instead is expecting results from workers.
@@ -151,7 +152,10 @@ someFunc = do
 
   case args of
     ["manager", host, port, n, repoPath] -> do
-      excecuteCommand $ "git --git-dir " ++ repoPath ++ "/.git rev-list master >> commitList.txt"
+      excecuteCommand ("git clone " ++ repoPath ++ " tmp-manager")
+      excecuteCommand "git --git-dir tmp-manager/.git rev-list master >> commitList.txt"
+      putStrLn "Cleaning up manager temp"
+      excecuteCommand "rm -rf tmp-manager"
       contents    <- readFile "commitList.txt"
       print $ "Contents: " ++ contents
       let l = lines contents
@@ -161,7 +165,7 @@ someFunc = do
       putStrLn "Starting Node as Manager"
       backend <- initializeBackend host port rtable
       startMaster backend $ \workers -> do
-        result <- manager (read n) workers l
+        result <- manager (read n) workers l repoPath
         liftIO $ print result
     ["worker", host, port] -> do
       putStrLn "Starting Node as Worker"
