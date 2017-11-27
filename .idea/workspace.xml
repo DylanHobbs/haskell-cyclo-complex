@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2231b168-d7b8-4bbc-a499-909241ad689e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cyclo-complex.cabal" afterPath="$PROJECT_DIR$/cyclo-complex.cabal" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docker-compose.yml" afterPath="$PROJECT_DIR$/docker-compose.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/cyclo-complex/CycloCompute.hs" afterPath="$PROJECT_DIR$/out/production/cyclo-complex/CycloCompute.hs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/CycloCompute.hs" afterPath="$PROJECT_DIR$/src/CycloCompute.hs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Lib.hs" afterPath="$PROJECT_DIR$/src/Lib.hs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/stack.yaml" afterPath="$PROJECT_DIR$/stack.yaml" />
     </list>
     <ignored path="$PROJECT_DIR$/.stack-work/" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -20,25 +15,17 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5184524">
+    <splitter split-orientation="horizontal" split-proportion="0.5904762">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file leaf-file-name="Lib.hs" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/Lib.hs">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="385">
-                  <caret line="66" column="28" lean-forward="true" selection-start-line="66" selection-start-column="28" selection-end-line="66" selection-end-column="28" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="CycloCompute.hs" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/CycloCompute.hs">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="285">
-                  <caret line="19" column="6" lean-forward="false" selection-start-line="19" selection-start-column="6" selection-end-line="20" selection-end-column="32" />
-                  <folding />
+                <state relative-caret-position="409">
+                  <caret line="69" column="48" lean-forward="false" selection-start-line="69" selection-start-column="48" selection-end-line="69" selection-end-column="48" />
+                  <folding>
+                    <marker date="1511812678000" expanded="true" signature="5375:5574" ph="..." />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -57,11 +44,21 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="PrimeFactors.hs" pinned="false" current-in-tab="true">
+          <file leaf-file-name="PrimeFactors.hs" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/PrimeFactors.hs">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="105">
                   <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="CycloCompute.hs" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/CycloCompute.hs">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="180">
+                  <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -80,11 +77,16 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>doWork</find>
       <find>docker</find>
       <find>master</find>
       <find>spawnLocal</find>
       <find>send</find>
+      <find>rtable</find>
+      <find>__remoteTable</find>
+      <find>initRemoteTable</find>
+      <find>Process Integer</find>
+      <find>doWork</find>
+      <find>match</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -101,8 +103,8 @@
         <option value="$PROJECT_DIR$/docker-compose.yml" />
         <option value="$PROJECT_DIR$/stack.yaml" />
         <option value="$PROJECT_DIR$/cyclo-complex.cabal" />
-        <option value="$PROJECT_DIR$/src/CycloCompute.hs" />
         <option value="$PROJECT_DIR$/src/Lib.hs" />
+        <option value="$PROJECT_DIR$/src/CycloCompute.hs" />
       </list>
     </option>
   </component>
@@ -271,12 +273,12 @@
       <workItem from="1511300017652" duration="1227000" />
       <workItem from="1511605341630" duration="2050000" />
       <workItem from="1511687965213" duration="558000" />
-      <workItem from="1511801976984" duration="2798000" />
+      <workItem from="1511801976984" duration="6276000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14324000" />
+    <option name="totallyTimeSpent" value="17802000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1680" height="1024" extended-state="6" />
@@ -326,7 +328,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="750">
           <caret line="50" column="10" lean-forward="false" selection-start-line="50" selection-start-column="6" selection-end-line="50" selection-end-column="10" />
-          <folding />
+          <folding>
+            <marker date="1511812678000" expanded="true" signature="5375:5574" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -350,7 +354,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1511812678000" expanded="true" signature="5375:5574" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -366,7 +372,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1511812678000" expanded="true" signature="5375:5574" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -411,7 +419,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1511812678000" expanded="true" signature="5375:5574" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -456,7 +466,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1511812678000" expanded="true" signature="5375:5574" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -535,14 +547,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/PrimeFactors.hs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cyclo-complex.cabal">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
@@ -551,18 +555,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/CycloCompute.hs">
+    <entry file="file://$PROJECT_DIR$/src/PrimeFactors.hs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="6" lean-forward="false" selection-start-line="19" selection-start-column="6" selection-end-line="20" selection-end-column="32" />
+        <state relative-caret-position="105">
+          <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Lib.hs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="66" column="28" lean-forward="true" selection-start-line="66" selection-start-column="28" selection-end-line="66" selection-end-column="28" />
+        <state relative-caret-position="409">
+          <caret line="69" column="48" lean-forward="false" selection-start-line="69" selection-start-column="48" selection-end-line="69" selection-end-column="48" />
+          <folding>
+            <marker date="1511812678000" expanded="true" signature="5375:5574" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/CycloCompute.hs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
         </state>
       </provider>

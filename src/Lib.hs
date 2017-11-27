@@ -34,11 +34,12 @@ import GitHub
 import System.Process
 import System.IO
 import System.Exit (ExitCode)
+import CycloCompute
 
 -- this is the work we get workers to do. It could be anything we want. To keep things simple, we'll calculate the
 -- number of prime factors for the integer passed.
-doWork :: Integer -> Integer
-doWork = numPrimeFactors
+doWork :: String -> Int
+doWork = calculateComplexity
 
 -- | worker function.
 -- This is the function that is called to launch a worker. It loops forever, asking for work, reading its message queue
@@ -60,12 +61,13 @@ worker (manager, workQueue) = do
       -- or else we will be sent (). If there is work, do it, otherwise terminate
       receiveWait
         [ match $ \n  -> do
-            liftIO $ putStrLn $ "[Node " ++ show us ++ "] given work: " ++ show n
+            liftIO $ putStrLn $ "[Node " ++ show us ++ "] given work: " ++ n
             send manager (doWork n)
             liftIO $ putStrLn $ "[Node " ++ show us ++ "] finished work."
             go us -- note the recursion this function is called again!
         , match $ \ () -> do
             liftIO $ putStrLn $ "Terminating node: " ++ show us
+            -- TODO: Clean up created files here
             return ()
         ]
 
@@ -73,17 +75,21 @@ remotable ['worker] -- this makes the worker function executable on a remote nod
 
 manager :: Integer    -- The number range we wish to generate work for (there will be n work packages)
         -> [NodeId]   -- The set of cloud haskell nodes we will initalise as workers
+        -> [String]
         -> Process Integer
-manager n workers = do
+manager n workers list = do
   us <- getSelfPid
 
   -- first, we create a thread that generates the work tasks in response to workers
   -- requesting work.
   workQueue <- spawnLocal $ do
     -- Return the next bit of work to be done
-    forM_ [1 .. n] $ \m -> do
-      pid <- expect   -- await a message from a free worker asking for work
-      send pid m     -- send them work
+--    forM_ [1 .. n] $ \m -> do
+--      pid <- expect   -- await a message from a free worker asking for work
+--      send pid m     -- send them work
+    forM_ list $ \item -> do
+      pid <- expect
+      send pid item
 
     -- Once all the work is done tell the workers to terminate. We do this by sending every worker who sends a message
     -- to us a null content: () . We do this only after we have distributed all the work in the forM_ loop above. Note
@@ -98,7 +104,7 @@ manager n workers = do
   liftIO $ putStrLn "[Manager] Workers spawned"
   -- wait for all the results from the workers and return the sum total. Look at the implementation, whcih is not simply
   -- summing integer values, but instead is expecting results from workers.
-  sumIntegers (fromIntegral n)
+  sumIntegers (length list)
 
 -- note how this function works: initialised with n, the number range we started the program with, it calls itself
 -- recursively, decrementing the integer passed until it finally returns the accumulated value in go:acc. Thus, it will
@@ -112,6 +118,15 @@ sumIntegers = go 0
     go !acc n = do
       m <- expect
       go (acc + m) (n - 1)
+
+--sumIntegers :: Int -> Process String
+--sumIntegers = go "start:"
+--  where
+--    go :: String -> Int -> Process String
+--    go !acc 0 = return acc
+--    go !acc n = do
+--      m <- expect
+--      go (acc ++ " " ++ m) (n - 1)
 
 rtable :: RemoteTable
 rtable = Lib.__remoteTable initRemoteTable
@@ -132,14 +147,17 @@ someFunc = do
 
   case args of
     ["manager", host, port, n, repoPath] -> do
-      excecuteCommand $ "git --git-dir " ++ repoPath ++ "/.git rev-list master"
+      excecuteCommand $ "git --git-dir " ++ repoPath ++ "/.git rev-list master >> commitList.txt"
       contents    <- readFile "commitList.txt"
+      print $ "Contents: " ++ contents
       let l = lines contents
+      print "List:"
+      mapM_ print l
 
       putStrLn "Starting Node as Manager"
       backend <- initializeBackend host port rtable
       startMaster backend $ \workers -> do
-        result <- manager (read n) workers
+        result <- manager (read n) workers l
         liftIO $ print result
     ["worker", host, port] -> do
       putStrLn "Starting Node as Worker"
