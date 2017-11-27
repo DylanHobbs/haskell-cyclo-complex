@@ -41,6 +41,11 @@ import CycloCompute
 doWork :: String -> Int
 doWork = calculateComplexity
 
+excecuteCommand :: String -> IO ()
+excecuteCommand command = do
+        ExitSuccess <- system command
+        print $ "Command: |" ++ command ++ "| executed successfully"
+
 -- | worker function.
 -- This is the function that is called to launch a worker. It loops forever, asking for work, reading its message queue
 -- and sending the result of runnning numPrimeFactors on the message content (an integer).
@@ -48,7 +53,12 @@ worker :: ( ProcessId  -- The processid of the manager (where we send the result
          , ProcessId) -- the process id of the work queue (where we get our work from)
        -> Process ()
 worker (manager, workQueue) = do
-    us <- getSelfPid              -- get our process identifier
+    us <- getSelfPid                          -- get our process identifier
+    let temp_dir = "tmp-worker" ++ drop 16 (show us)   -- create a scratch dir for worker work
+
+    --liftIO $ putStrLn $ "Clonging worker copy of repo: " ++ repoName
+    --liftIO $ excecuteCommand ("git clone " ++ repoName ++ " " ++ temp_dir)
+    liftIO $ excecuteCommand ("git clone https://github.com/DylanHobbs/haskell-chat.git " ++ temp_dir)
     liftIO $ putStrLn $ "Starting worker: " ++ show us
     go us
   where
@@ -67,7 +77,8 @@ worker (manager, workQueue) = do
             go us -- note the recursion this function is called again!
         , match $ \ () -> do
             liftIO $ putStrLn $ "Terminating node: " ++ show us
-            -- TODO: Clean up created files here
+            liftIO $ putStrLn "Performing cleanup"
+            liftIO $ excecuteCommand ("rm -rf " ++ "tmp-worker" ++ drop 16 (show us))
             return ()
         ]
 
@@ -130,13 +141,6 @@ sumIntegers = go 0
 
 rtable :: RemoteTable
 rtable = Lib.__remoteTable initRemoteTable
-
-
-
-excecuteCommand :: String -> IO ()
-excecuteCommand command = do
-        ExitSuccess <- system command
-        print $ "Command: |" ++ command ++ "| executed successfully"
 
 
 -- | This is the entrypoint for the program. We deal with program arguments and launch up the cloud haskell code from
