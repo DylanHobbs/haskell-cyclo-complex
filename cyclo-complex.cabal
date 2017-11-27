@@ -23,6 +23,7 @@ library
                      , distributed-process-simplelocalnet
                      , argon
                      , github
+                     , process
   default-language:    Haskell2010
 
 executable cyclo-complex-exe

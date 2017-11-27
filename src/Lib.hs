@@ -29,6 +29,12 @@ import           PrimeFactors
 import           System.Environment                                 (getArgs)
 import           System.Exit
 
+import Argon
+import GitHub
+import System.Process
+import System.IO
+import System.Exit (ExitCode)
+
 -- this is the work we get workers to do. It could be anything we want. To keep things simple, we'll calculate the
 -- number of prime factors for the integer passed.
 doWork :: Integer -> Integer
@@ -54,9 +60,9 @@ worker (manager, workQueue) = do
       -- or else we will be sent (). If there is work, do it, otherwise terminate
       receiveWait
         [ match $ \n  -> do
-            liftIO $ putStrLn $ "[Node " ++ (show us) ++ "] given work: " ++ show n
+            liftIO $ putStrLn $ "[Node " ++ show us ++ "] given work: " ++ show n
             send manager (doWork n)
-            liftIO $ putStrLn $ "[Node " ++ (show us) ++ "] finished work."
+            liftIO $ putStrLn $ "[Node " ++ show us ++ "] finished work."
             go us -- note the recursion this function is called again!
         , match $ \ () -> do
             liftIO $ putStrLn $ "Terminating node: " ++ show us
@@ -89,7 +95,7 @@ manager n workers = do
   -- Next, start worker processes on the given cloud haskell nodes. These will start
   -- asking for work from the workQueue thread immediately.
   forM_ workers $ \ nid -> spawn nid ($(mkClosure 'worker) (us, workQueue))
-  liftIO $ putStrLn $ "[Manager] Workers spawned"
+  liftIO $ putStrLn "[Manager] Workers spawned"
   -- wait for all the results from the workers and return the sum total. Look at the implementation, whcih is not simply
   -- summing integer values, but instead is expecting results from workers.
   sumIntegers (fromIntegral n)
@@ -110,16 +116,26 @@ sumIntegers = go 0
 rtable :: RemoteTable
 rtable = Lib.__remoteTable initRemoteTable
 
+
+
+excecuteCommand :: String -> IO ()
+excecuteCommand command = do
+        ExitSuccess <- system command
+        print $ "Command: |" ++ command ++ "| executed successfully"
+
+
 -- | This is the entrypoint for the program. We deal with program arguments and launch up the cloud haskell code from
 -- here.
 someFunc :: IO ()
 someFunc = do
-
-
   args <- getArgs
 
   case args of
-    ["manager", host, port, n] -> do
+    ["manager", host, port, n, repoPath] -> do
+      excecuteCommand $ "git --git-dir " ++ repoPath ++ "/.git rev-list master"
+      contents    <- readFile "commitList.txt"
+      let l = lines contents
+
       putStrLn "Starting Node as Manager"
       backend <- initializeBackend host port rtable
       startMaster backend $ \workers -> do
