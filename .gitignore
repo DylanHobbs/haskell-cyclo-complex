@@ -1,4 +1,5 @@
-.stack-work
-.out
-.idea/*
+.stack-work/
+.out/
+.idea/
 *.txt
+testRepos/
