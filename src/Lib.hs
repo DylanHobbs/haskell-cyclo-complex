@@ -38,7 +38,7 @@ import CycloCompute
 
 -- this is the work we get workers to do. It could be anything we want. To keep things simple, we'll calculate the
 -- number of prime factors for the integer passed.
-doWork :: String -> Int
+doWork :: String -> String -> Int
 doWork = calculateComplexity
 
 excecuteCommand :: String -> IO ()
@@ -60,10 +60,10 @@ worker (manager, workQueue, repoPath) = do
     liftIO $ putStrLn $ "Clonging worker copy of repo: " ++ repoPath
     liftIO $ excecuteCommand ("git clone " ++ repoPath ++ " " ++ temp_dir)
     liftIO $ putStrLn $ "Starting worker: " ++ show us
-    go us
+    go us temp_dir
   where
-    go :: ProcessId -> Process ()
-    go us = do
+    go :: ProcessId -> String -> Process ()
+    go us dir = do
 
       send workQueue us -- Ask the queue for work. Note that we send out process id so that a message can be sent to us
 
@@ -72,9 +72,9 @@ worker (manager, workQueue, repoPath) = do
       receiveWait
         [ match $ \n  -> do
             liftIO $ putStrLn $ "[Node " ++ show us ++ "] given work: " ++ n
-            send manager (doWork n)
+            send manager (doWork n dir)
             liftIO $ putStrLn $ "[Node " ++ show us ++ "] finished work."
-            go us -- note the recursion this function is called again!
+            go us dir-- note the recursion this function is called again!
         , match $ \ () -> do
             liftIO $ putStrLn $ "Terminating node: " ++ show us
             liftIO $ putStrLn "Performing cleanup"

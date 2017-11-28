@@ -6,8 +6,10 @@ import System.Process
 import System.IO
 import System.Exit (ExitCode (ExitSuccess))
 
-calculateComplexity :: String -> Int
-calculateComplexity commit = length commit
+type Dir = String
+
+calculateComplexity :: String -> Dir -> Int
+calculateComplexity commit dir = length commit
 
 
 
