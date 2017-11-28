@@ -35,30 +35,26 @@ import System.Process
 import System.IO
 import System.Exit (ExitCode)
 import CycloCompute
+import SuperHelper5000
 
 -- this is the work we get workers to do. It could be anything we want. To keep things simple, we'll calculate the
 -- number of prime factors for the integer passed.
 doWork :: String -> String -> Int
 doWork = calculateComplexity
 
-excecuteCommand :: String -> IO ()
-excecuteCommand command = do
-        ExitSuccess <- system command
-        print $ "Command: |" ++ command ++ "| executed successfully"
-
 -- | worker function.
 -- This is the function that is called to launch a worker. It loops forever, asking for work, reading its message queue
 -- and sending the result of runnning numPrimeFactors on the message content (an integer).
 worker :: ( ProcessId   -- The processid of the manager (where we send the results of our work)
-         , ProcessId    -- the process id of the work queue (where we get our work from)
-         , String)      -- Repo path
-       -> Process ()
+          , ProcessId    -- the process id of the work queue (where we get our work from)
+          , String)      -- Repo path for cloning
+         -> Process ()
 worker (manager, workQueue, repoPath) = do
     us <- getSelfPid                          -- get our process identifier
     let temp_dir = "tmp-worker" ++ drop 16 (show us)   -- create a scratch dir for worker work
 
     liftIO $ putStrLn $ "Clonging worker copy of repo: " ++ repoPath
-    liftIO $ excecuteCommand ("git clone " ++ repoPath ++ " " ++ temp_dir)
+    liftIO $ excecuteCommand_ ("git clone " ++ repoPath ++ " " ++ temp_dir)
     liftIO $ putStrLn $ "Starting worker: " ++ show us
     go us temp_dir
   where
@@ -78,7 +74,7 @@ worker (manager, workQueue, repoPath) = do
         , match $ \ () -> do
             liftIO $ putStrLn $ "Terminating node: " ++ show us
             liftIO $ putStrLn "Performing cleanup"
-            liftIO $ excecuteCommand ("rm -rf " ++ "tmp-worker" ++ drop 16 (show us))
+            liftIO $ excecuteCommand_ ("rm -rf " ++ "tmp-worker" ++ drop 16 (show us))
             return ()
         ]
 
@@ -152,10 +148,10 @@ someFunc = do
 
   case args of
     ["manager", host, port, n, repoPath] -> do
-      excecuteCommand ("git clone " ++ repoPath ++ " tmp-manager")
-      excecuteCommand "git --git-dir tmp-manager/.git rev-list master >> commitList.txt"
+      excecuteCommand_ ("git clone " ++ repoPath ++ " tmp-manager")
+      excecuteCommand_ "git --git-dir tmp-manager/.git rev-list master >> commitList.txt"
       putStrLn "Cleaning up manager temp"
-      excecuteCommand "rm -rf tmp-manager"
+      excecuteCommand_ "rm -rf tmp-manager"
       contents    <- readFile "commitList.txt"
       print $ "Contents: " ++ contents
       let l = lines contents
