@@ -8,6 +8,7 @@ import System.Exit (ExitCode (ExitSuccess))
 import SuperHelper5000
 import Control.Monad
 import Data.Aeson
+import Control.Concurrent
 
 type Dir = String
 
@@ -25,11 +26,12 @@ type Dir = String
 --                let x = length l
 --                return x
 
---caclculateComplexity :: String -> Dir -> Int
+--caclculateComplexity :: String -> String -> IO AnalysisResult
 --caclculateComplexity commit dir = do
 --                  let a = analyze defaultConfig dir
 --                  let t = (liftM snd) a
---                  let v = toJSON t
+--                  let b = Right t
+
 
 
 calculateComplexity :: String -> Dir -> Int

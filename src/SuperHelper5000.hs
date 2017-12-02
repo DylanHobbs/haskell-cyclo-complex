@@ -1,4 +1,7 @@
-module SuperHelper5000 where
+module SuperHelper5000
+          ( excecuteCommand_
+          , excecuteCommand
+          ) where
 
 import System.Process
 import System.IO

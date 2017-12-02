@@ -1,4 +1,4 @@
-
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE BangPatterns    #-}
 {-# LANGUAGE TemplateHaskell #-}
 --{-# CPP #-}
@@ -14,7 +14,9 @@
 -- operates. A docker-compose.yml file is provided that supports the launching of a master and set of workers.
 
 module Lib
-    ( someFunc
+    (
+      startWorker
+    , startManager
     ) where
 
 -- These imports are required for Cloud Haskell
@@ -140,42 +142,67 @@ rtable :: RemoteTable
 rtable = Lib.__remoteTable initRemoteTable
 
 
--- | This is the entrypoint for the program. We deal with program arguments and launch up the cloud haskell code from
--- here.
-someFunc :: IO ()
-someFunc = do
-  args <- getArgs
-
-  case args of
-    ["manager", host, port, n, repoPath] -> do
+startManager :: String -> String -> String -> String -> IO ()
+startManager host port n repoPath = do
       excecuteCommand_ ("git clone " ++ repoPath ++ " tmp-manager")
       excecuteCommand_ "git --git-dir tmp-manager/.git rev-list master >> commitList.txt"
       putStrLn "Cleaning up manager temp"
       excecuteCommand_ "rm -rf tmp-manager"
       contents    <- readFile "commitList.txt"
       print $ "Contents: " ++ contents
+      putStrLn "Cleaning up commitList"
+      excecuteCommand_ "rm -rf commitList.txt"
       let l = lines contents
       print "List:"
       mapM_ print l
-
       putStrLn "Starting Node as Manager"
       backend <- initializeBackend host port rtable
       startMaster backend $ \workers -> do
         result <- manager (read n) workers l repoPath
+        liftIO $ print "Result:"
         liftIO $ print result
-    ["worker", host, port] -> do
+
+startWorker :: String -> String -> String -> IO ()
+startWorker host port repoPath = do
       putStrLn "Starting Node as Worker"
       backend <- initializeBackend host port rtable
       startSlave backend
-    _ -> putStrLn "Bad parameters"
 
-
-  -- create a cloudhaskell node, which must be initialised with a network transport
-  -- Right transport <- createTransport "127.0.0.1" "10501" defaultTCPParameters
-  -- node <- newLocalNode transport initRemoteTable
-
-  -- runProcess node $ do
-  --   us <- getSelfNode
-  --   _ <- spawnLocal $ sampleTask (1 :: Int, "using spawnLocal")
-  --   pid <- spawn us $ $(mkClosure 'sampleTask) (1 :: Int, "using spawn")
-  --   liftIO $ threadDelay 2000000
+-- | This is the entrypoint for the program. We deal with program arguments and launch up the cloud haskell code from
+---- here.
+--someFunc :: IO ()
+--someFunc = do
+--  args <- getArgs
+--
+--  case args of
+--    ["manager", host, port, n, repoPath] -> do
+--      excecuteCommand_ ("git clone " ++ repoPath ++ " tmp-manager")
+--      excecuteCommand_ "git --git-dir tmp-manager/.git rev-list master >> commitList.txt"
+--      putStrLn "Cleaning up manager temp"
+--      excecuteCommand_ "rm -rf tmp-manager"
+--      contents    <- readFile "commitList.txt"
+--      let l = lines contents
+--      print "List:"
+--      mapM_ print l
+--
+--      putStrLn "Starting Node as Manager"
+--      backend <- initializeBackend host port rtable
+--      startMaster backend $ \workers -> do
+--        result <- manager (read n) workers l repoPath
+--        liftIO $ print result
+--    ["worker", host, port] -> do
+--      putStrLn "Starting Node as Worker"
+--      backend <- initializeBackend host port rtable
+--      startSlave backend
+--    _ -> putStrLn "Bad parameters"
+--
+--
+--  -- create a cloudhaskell node, which must be initialised with a network transport
+--  -- Right transport <- createTransport "127.0.0.1" "10501" defaultTCPParameters
+--  -- node <- newLocalNode transport initRemoteTable
+--
+--  -- runProcess node $ do
+--  --   us <- getSelfNode
+--  --   _ <- spawnLocal $ sampleTask (1 :: Int, "using spawnLocal")
+--  --   pid <- spawn us $ $(mkClosure 'sampleTask) (1 :: Int, "using spawn")
+--  --   liftIO $ threadDelay 2000000
